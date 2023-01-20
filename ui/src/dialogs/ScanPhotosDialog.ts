@@ -15,9 +15,13 @@ type DetectPoseResults = {
 const worker = new Worker('/assets/detect-pose.worker.js', {type: 'classic'});
 
 function detectPose(image: HTMLImageElement) {
-    return new Promise<DetectPoseResults>(async function (resolve) {
+    return new Promise<DetectPoseResults>(async function (resolve, reject) {
         worker.onmessage = function (e) {
-            resolve(e.data);
+            if (e.data) {
+                resolve(e.data);
+            } else {
+                reject('Failed to run model');
+            }
         };
         worker.postMessage(await createImageBitmap(image));
     });
@@ -111,6 +115,11 @@ export default defineComponent({
                     const json: string[] = await res.json();
                     const folder = dataset.getFolder(path);
                     const existed = new Set(folder.records.map(record => record.filename));
+                    if (folder.discard) {
+                        for (let filename of folder.discard) {
+                            existed.add(filename);
+                        }
+                    }
                     const images = json.filter(file => {
                         return isImage(file) && !existed.has(file);
                     });
@@ -132,24 +141,36 @@ export default defineComponent({
                         const url = BASE_PATH + '/fs/file?path=' + path;
                         currImgUrl.value = url;
                         const startTime = Date.now();
-                        const image = await loadImage(url);
-                        const result = await detectPose(image);
-                        if (result.normalizedLandmarks.length === NUM_OF_LANDMARKS) {
-                            const record = new PhotoPoseLandmarks();
-                            record.filename = img;
-                            record.width = image.width;
-                            record.height = image.height;
-                            for (let i = 0, len = result.normalizedLandmarks.length; i < len; ++i) {
-                                record.normalized.push(result.normalizedLandmarks[i].point);
-                                record.world.push(result.worldLandmarks[i].point);
-                                record.visibility.push(result.normalizedLandmarks[i].visibility);
+
+                        let image: HTMLImageElement | null = null;
+                        try {
+                            image = await loadImage(url);
+                        } catch (e) {
+                            console.error(e);
+                            landmarks.value = [];
+                        }
+                        if (image) {
+                            const result = await detectPose(image);
+                            if (result.normalizedLandmarks.length === NUM_OF_LANDMARKS) {
+                                const record = new PhotoPoseLandmarks();
+                                record.filename = img;
+                                record.width = image.width;
+                                record.height = image.height;
+                                for (let i = 0, len = result.normalizedLandmarks.length; i < len; ++i) {
+                                    record.normalized.push(result.normalizedLandmarks[i].point);
+                                    record.world.push(result.worldLandmarks[i].point);
+                                    record.visibility.push(result.normalizedLandmarks[i].visibility);
+                                }
+                                folder.records.push(record);
+                            } else {
+                                folder.discard = folder.discard || [];
+                                folder.discard.push(img);
                             }
-                            folder.records.push(record);
+                            landmarks.value = result.normalizedLandmarks;
                         }
                         let dt = Date.now() - startTime;
                         avgTime = (avgTime * progress.value + dt) / (progress.value + 1);
                         prevImgUrl.value = url;
-                        landmarks.value = result.normalizedLandmarks;
                         progress.value += 1;
                         if (stop.value || total.value === progress.value) {
                             break;

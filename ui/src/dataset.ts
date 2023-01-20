@@ -11,6 +11,7 @@ export class DatasetFolder {
     features: { [name: string]: Float32Array }[] = [];
     recordsLoaded: boolean = false;
     landmarksLoaded: boolean = false;
+    discard?: string[];
 }
 
 const dataset = reactive({
@@ -66,6 +67,7 @@ const dataset = reactive({
             record.height,
         ]);
         formData.append('files[]', new Blob([JSON.stringify(json)]), 'summary.json');
+        formData.append('files[]', new Blob([JSON.stringify(folder.discard || [])]), 'discard.json');
         for (let chunkIdx = 0, chunks = Math.ceil(len / DATASET_CHUNK_SIZE); chunkIdx < chunks; ++chunkIdx) {
             let saved = true;
             const chunk: PhotoPoseLandmarks[] = [];
@@ -135,6 +137,12 @@ const dataset = reactive({
             record.height = arr[2];
             record.saved = true;
             folder.records.push(record);
+        }
+        {
+            const res = await request(`/ds/records?path=${path}&file=discard.json`);
+            if (res.status === 200) {
+                folder.discard = JSON.parse(await res.text()) as string[];
+            }
         }
         folder.recordsLoaded = true;
     },

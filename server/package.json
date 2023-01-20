@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "start": "node dist/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\"",
-    "pack": "nexe -i dist/index.js -o dist/server.exe -r public/** -b"
+    "pack": "nexe -i dist/index.js -o dist/PoseSearch.exe -r public/** -b --verbose"
   },
   "author": "",
   "license": "MIT",
