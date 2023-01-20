@@ -42,6 +42,10 @@ export default defineComponent({
                 localStorage.setItem('pose-search-paths', JSON.stringify(searchPaths.value));
             });
         }
+        watch(paths, function () {
+            const set = new Set(paths.value);
+            searchPaths.value = searchPaths.value.filter(path => set.has(path));
+        });
         const bodyPart = ref('');
         const model = new SkeletonModel();
         const matchers: {
