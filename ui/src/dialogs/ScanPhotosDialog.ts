@@ -3,7 +3,7 @@ import NormalizedLandmarksCanvas from '../components/NormalizedLandmarksCanvas/N
 import PopupDialog from '../components/popup/PopupDialog/PopupDialog.vue';
 import {useDataset} from '../dataset';
 import {loadImage} from '../utils/image';
-import PhotoPoseLandmarks from '../utils/PhotoPoseLandmarks';
+import PhotoPoseLandmarks, {NUM_OF_LANDMARKS} from '../utils/PhotoPoseLandmarks';
 import {BASE_PATH, request} from '../utils/request';
 import {showAlertDialog} from './dialogs';
 
@@ -134,16 +134,18 @@ export default defineComponent({
                         const startTime = Date.now();
                         const image = await loadImage(url);
                         const result = await detectPose(image);
-                        const record = new PhotoPoseLandmarks();
-                        record.filename = img;
-                        record.width = image.width;
-                        record.height = image.height;
-                        for (let i = 0, len = result.normalizedLandmarks.length; i < len; ++i) {
-                            record.normalized.push(result.normalizedLandmarks[i].point);
-                            record.world.push(result.worldLandmarks[i].point);
-                            record.visibility.push(result.normalizedLandmarks[i].visibility);
+                        if (result.normalizedLandmarks.length === NUM_OF_LANDMARKS) {
+                            const record = new PhotoPoseLandmarks();
+                            record.filename = img;
+                            record.width = image.width;
+                            record.height = image.height;
+                            for (let i = 0, len = result.normalizedLandmarks.length; i < len; ++i) {
+                                record.normalized.push(result.normalizedLandmarks[i].point);
+                                record.world.push(result.worldLandmarks[i].point);
+                                record.visibility.push(result.normalizedLandmarks[i].visibility);
+                            }
+                            folder.records.push(record);
                         }
-                        folder.records.push(record);
                         let dt = Date.now() - startTime;
                         avgTime = (avgTime * progress.value + dt) / (progress.value + 1);
                         prevImgUrl.value = url;

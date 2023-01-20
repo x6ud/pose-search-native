@@ -24,7 +24,10 @@ npm run dev
 ```
 
 In `/server`
-
+```
+npm run build
+```
+then
 ```
 npm run dev
 ```
@@ -45,3 +48,4 @@ And
 ```
 npm run pack
 ```
+See https://github.com/nexe/nexe
