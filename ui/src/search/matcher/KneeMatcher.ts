@@ -124,11 +124,11 @@ export default class KneeMatcher implements PoseMatcher {
         const crotchErrL = getQuatDistance(this.crotchRotation, this.isLeft ? crotchRotation : getQuatMirrorX(crotchRotation));
         let scoreL =
             (Math.PI - thighZAngleErrL)
-            * (Math.PI - calfZAngleErrL)
-            * (Math.PI - kneeAngleErrL)
-            * (Math.PI * 2 - kneeViewAngleErrL)
-            * (Math.PI - thighAngleErrL)
-            * (Math.PI - crotchErrL)
+            + (Math.PI - calfZAngleErrL)
+            + (Math.PI - kneeAngleErrL) * 2
+            + (Math.PI * 2 - kneeViewAngleErrL) * 2
+            + (Math.PI - thighAngleErrL)
+            + (Math.PI - crotchErrL)
         ;
 
         const thighZAxisAngleR = angleBetweenVec3(Z_AXIS, rightThighDir);
@@ -144,11 +144,11 @@ export default class KneeMatcher implements PoseMatcher {
         const crotchErrR = getQuatDistance(this.crotchRotation, !this.isLeft ? crotchRotation : getQuatMirrorX(crotchRotation));
         let scoreR =
             (Math.PI - thighZAngleErrR)
-            * (Math.PI - calfZAngleErrR)
-            * (Math.PI - kneeAngleErrR)
-            * (Math.PI * 2 - kneeViewAngleErrR)
-            * (Math.PI - thighAngleErrR)
-            * (Math.PI - crotchErrR)
+            + (Math.PI - calfZAngleErrR)
+            + (Math.PI - kneeAngleErrR) * 2
+            + (Math.PI * 2 - kneeViewAngleErrR) * 2
+            + (Math.PI - thighAngleErrR)
+            + (Math.PI - crotchErrR)
         ;
 
         if (isVecZero(leftThighDir)

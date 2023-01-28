@@ -124,11 +124,11 @@ export default class ElbowMatcher implements PoseMatcher {
         const chestErrL = getQuatDistance(this.chestRotation, this.isLeft ? chestRotation : getQuatMirrorX(chestRotation));
         let scoreL =
             (Math.PI - upperArmZAngleErrL)
-            * (Math.PI - lowerArmZAngleErrL)
-            * (Math.PI - elbowAngleErrL)
-            * (Math.PI * 2 - elbowViewAngleErrL)
-            * (Math.PI - upperArmAngleErrL)
-            * (Math.PI - chestErrL)
+            + (Math.PI - lowerArmZAngleErrL)
+            + (Math.PI - elbowAngleErrL) * 2
+            + (Math.PI * 2 - elbowViewAngleErrL) * 2
+            + (Math.PI - upperArmAngleErrL)
+            + (Math.PI - chestErrL)
         ;
 
         const upperArmZAxisAngleR = angleBetweenVec3(Z_AXIS, rightUpperArmDir);
@@ -144,11 +144,11 @@ export default class ElbowMatcher implements PoseMatcher {
         const chestErrR = getQuatDistance(this.chestRotation, !this.isLeft ? chestRotation : getQuatMirrorX(chestRotation));
         let scoreR =
             (Math.PI - upperArmZAngleErrR)
-            * (Math.PI - lowerArmZAngleErrR)
-            * (Math.PI - elbowAngleErrR)
-            * (Math.PI * 2 - elbowViewAngleErrR)
-            * (Math.PI - upperArmAngleErrR)
-            * (Math.PI - chestErrR)
+            + (Math.PI - lowerArmZAngleErrR)
+            + (Math.PI - elbowAngleErrR) * 2
+            + (Math.PI * 2 - elbowViewAngleErrR) * 2
+            + (Math.PI - upperArmAngleErrR)
+            + (Math.PI - chestErrR)
         ;
 
         if (isVecZero(leftUpperArmDir)

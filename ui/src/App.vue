@@ -61,9 +61,12 @@
                                    :highlights="matchers[bodyPart]?.highlights"
             />
             <div style="margin-top: 8px; line-height: 1.5em;">
-                <div>Pose Search Native</div>
-                <div>Version: 20230120</div>
+                <div style="font-weight: bold;">Pose Search Native</div>
+                <div>Version: 20230128</div>
                 <div>Author: x6udpngx</div>
+                <div>
+                    <a class="link" href="https://github.com/x6ud/pose-search-native" target="_blank">Source</a>
+                </div>
                 <div>
                     <span>Support me:&nbsp;</span>
                     <a class="link" href="https://ko-fi.com/x6udpngx" target="_blank">Ko-fi.com/x6udpngx</a>
