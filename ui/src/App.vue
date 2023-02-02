@@ -62,7 +62,7 @@
             />
             <div style="margin-top: 8px; line-height: 1.5em;">
                 <div style="font-weight: bold;">Pose Search Native</div>
-                <div>Version: 20230128</div>
+                <div>Version: 20230202</div>
                 <div>Author: x6udpngx</div>
                 <div>
                     <a class="link" href="https://github.com/x6ud/pose-search-native" target="_blank">Source</a>
